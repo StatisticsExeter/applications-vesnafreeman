@@ -8,27 +8,34 @@ import plotly.express as px
 def plot_scatter(df, x_name, y_name):
     """Given a dataframe containing numeric columns specified by x_name and y_name
     return a plotly express scatterplot"""
-    return 0
+    return px.scatter(df, x=x_name, y=y_name)
 
 
-def calculate_correlation(df, x1, x2):
+def calculate_correlation(df, x_name, y_name):
     """Given a dataframe containing numeric columns specified by x_name and y_name
     return two objects (numbers), the first is the pearson correlation coefficient, the second 
     the significance of this estimate"""
-    return 0
+    x = df[x_name]
+    y = df[y_name]
+    x1, x2 = pearsonr(x,y)
+    return x1, x2
 
 
 def fit_regression(df, x_name, y_name):
     """Given a dataframe containing numeric columns specified by x_name and y_name
     return the stats models OLS fit of a regression model of y on x"""
-    return 0
+    x = df[x_name]
+    y = df[y_name]
+    x = sm.add_constant(x)
+    result = sm.OLS(y, x).fit()
+    return result
 
 
 def filter_data(df, year):
     """Given a dataframe of various rows including a column 'Year' and an integer year
     return a dataframe containing only those rows where the value in this column is less
     than the value of the supplied year"""
-    return 0
+    return df[df['Year'] < year]
 
 
 def tyler_viglen():
@@ -46,3 +53,7 @@ def tyler_viglen():
       ])
     years = np.arange(1999, 2022)
     return pd.DataFrame({'Year': years, 'Kerosene': array_1, 'DivorceRate': array_2})
+
+
+
+
