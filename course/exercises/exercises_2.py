@@ -36,7 +36,7 @@ def rename_columns(df, columns_dict):
     """Given a dataframe 'df# and a dictionary that maps
     existing column names to new names, return a dataframe
     with the new names."""
-    return 0
+    return df.rename(columns = columns_dict)
 
 
 def drop_missing(df):

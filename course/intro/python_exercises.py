@@ -13,7 +13,7 @@ def max_value(numbers):
 def reverse_string(s):
     """Given a string 'string'
     return the reversed version of the input string."""
-    s = "string"
+  
     rev_string = s[::-1]
     return rev_string
 
@@ -37,14 +37,14 @@ def get_fifth_row(df):
 def column_mean(df, column):
     """Given a dataframe 'df' and the name of a column 'column'
     return the mean of the specified column in a pandas DataFrame."""
-    mean_col = df["column"].mean()
+    mean_col = df[column].mean()
     return mean_col
 
 
 def lookup_key(d, key):
     """Given a dictionary 'd' and a key 'key'
     return the value associated with the key in the dictionary."""
-    return d.get('key')
+    return d.get(key)
 
 
 def count_occurrences(lst):
@@ -65,5 +65,5 @@ def drop_missing(df):
 def value_counts_df(df, column):
     """Given a dataframe 'df' with various columns and the name of one of those columns 'column',
     return a DataFrame with value counts of the specified column."""
-    counts = df['column'].value_counts()
-    return counts.to_frame()
+    counts = df[column].value_counts().reset_index()
+    return counts
