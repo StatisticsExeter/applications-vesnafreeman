@@ -19,7 +19,8 @@ def scatter_onecat(df, cat_column, title):
     """Return a plotly express figure which is a scatterplot of all numeric columns in df
     with markers/colours given by the text in column cat_column
     and overall title specfied by title"""
-    return 0
+    fig = px.scatter(df, color = cat_column, title = title)
+    return fig
 
 
 def get_frequencies(df, cat_column):
