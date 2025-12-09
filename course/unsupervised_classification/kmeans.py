@@ -12,7 +12,7 @@ VIGNETTE_DIR = Path('data_cache') / 'vignettes' / 'unsupervised_classification'
 def _kmeans(df, k):
     """Given dataframe df containing only suitable variables and integer k
     Return a sci-kit learn KMeans solution fitted to these data"""
-    k_means = KMeans(n_clusters = k, random_state = 42)
+    k_means = KMeans(n_clusters=k, random_state=42)
     k_means.fit(df)
     return k_means
 

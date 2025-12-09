@@ -32,21 +32,3 @@ def generate_scatterplot():
     df = pd.read_csv("data_cache/unsupervised.csv")
     fig = _scatter(df, title="Scatter Matrix of Continuous Variables")
     fig.write_html("vignettes/unsupervised/cache/scatterplot.html")
-
-
-from sklearn.decomposition import PCA
-df = pd.read_csv("/Users/vesnafreeman/Desktop/mthm503/data/olive_oil.csv")
-df_working = df.iloc[:, 3:]
-X = df_working.values
-
-def corr_PCA():
-  X_std = StandardScaler().fit_transform(X)
-  pca_corr = PCA()
-  pca_corr.fit(X_std)
-  explained_var_corr = pca_corr.explained_variance_ratio_
-
-  scores = pca.transform(pca_corr)
-  scores_df = pd.DataFrame(scores, 
-      columns=[f'PC{i+1}' for i in range(scores.shape[1])])
-  
-  
