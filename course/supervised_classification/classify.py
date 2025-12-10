@@ -19,7 +19,7 @@ def fit_lda():
     """Initialise a linear discriminant analysis classifierr called classifier which can be
     passed to fit_classifier and fitted by classifer.fit()"""
     classifier = LinearDiscriminantAnalysis()
-    classifier.fit(X_train_path, y_train_path)
+    # classifier.fit(X_train_path, y_train_path)
     fit_classifier(X_train_path, y_train_path, model_path, classifier)
 
 
@@ -31,5 +31,5 @@ def fit_qda():
     """Initialise a linear discriminant analysis classifierr called classifier which can be
     passed to fit_classifier and fitted by classifer.fit()"""
     classifier = QuadraticDiscriminantAnalysis()
-    classifier.fit(X_train_path, y_train_path)
+    # classifier.fit(X_train_path, y_train_path)
     fit_classifier(X_train_path, y_train_path, model_path, classifier)
