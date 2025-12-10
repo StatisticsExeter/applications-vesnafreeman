@@ -38,10 +38,7 @@ def _fit_dendrogram(df):
     """Given a dataframe containing only suitable values
     Return a scipy.cluster.hierarchy hierarchical clustering solution to these data"""
     linked = linkage(df, method='ward')
-    fig = ff.create_dendrogram(df, linkagefun=lambda x: linked)
-    fig.update_layout(width=800, height=500)
-    fig.write_html("dendrogram.html")
-    return fig
+    return linked
 
 
 def _plot_dendrogram(df):
