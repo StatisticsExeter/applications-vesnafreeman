@@ -7,43 +7,21 @@ format:
 
 ---
 
-## Your task
-
-This material is provided as context to the problem. You should rewrite it as you see fit.
 
 ## The Problem
 
-Data on [Energy Certificates](https://epc.opendatacommunities.org/) were downloaded in March 2025. These certificates are a non-random sample of UK housing, and contain information such as:
-
-- Property energy efficiency: The core data is the energy efficiency rating, which ranges from A (most efficient) to G (least efficient).
-- CO2 emissions: The data includes information on the building's likely carbon dioxide emissions.
-- Energy costs: Potential costs for heating and lighting the property are provided.
-- Improvement recommendations: Each EPC lists cost-effective ways to improve the building's energy performance.
-
-In all, there are 93 variables available on a wide range of metrics. The full dataset is in the course database server at `10.121.4.250` in `energy.energy_certificates`
-
-The data have been used for various published supervised classification exercises:
-
-- ONS data science campus EPC data to predict energy efficiency ratings across Welsh properties. They applied models like XGBoost and found that features such as floor area, number of habitable rooms, and extension count were most predictive <https://datasciencecampus.ons.gov.uk/projects/using-machine-learning-to-predict-energy-efficiency/>
-- EPC anomaly detection (improve data quality) <https://www.iaarc.org/publications/fulltext/102_A_Comprehensive_Approach_for_Automated_Anomaly_Detection_and_Enhancement_of_EPC_Datasets_for_Decarbonization.pdf>
-- Identifying priorities for retrofit strategy <https://uwlpress.uwl.ac.uk/newvistas/article/id/299/>
-- EPC prediction <https://github.com/yourunclefrankie/Energy-efficiency-prediction>
-
-In reducing the carbon footprint of UK housing, it is important to develop a strategy that offers the right solutions to the right properties. It is widely believed that houses build before 1930 require very different approaches to houses built after that period.  In this task, you are required to determine whether it is possible to determine the age of a house based on several recorded energy metrics. These are `current_energy_efficiency`, `environment_impact_current`, `energy_consumption_current`, `co2_emissions_current`, `lighting_cost_current`, `heating_cost_current`, `hot_water_cost_current`.  You have data for all certificates issued in a single local authority area.  This would help the local authority identify the right targets just using metrics rather than requiring a visit to the property to determine its age.
-
+Energy Performance Certificates (EPC) have become mandatory in England and Wales since 2008; they rate the energy efficiency of buildings from A (most efficient) to G (least efficient). To ensure a sustainable future and delivering net zero by 2050, the UK government (2024) aims to reform the Energy Performance of Buildings. Therefore, in this analysis we will observe data on Energy Certificates downloaded in March 2025 which provide a non-random sample of UK housing. This data includes property energy efficiency, C02 emissions of the buildings, energy costs and improvement recommendations. Through this data we will aim to identify if it’s possible to determine whether a house was built before 1930 based on several energy metrics. Those are current: energy efficiency, environmental impact, energy consumption, CO2 emissions, lighting costs, heating costs and hot water costs.
 
 
 
 ## The Data
 
-A very simple preview of the data is given below:
+Firstly, we will look at summary statistics.
 
 ```{python}
 #| echo: false
 import pandas as pd
 ```
-
-And a clumsy presentation of some group summary statistics:
 
 
 ```{python}
@@ -54,7 +32,6 @@ print(df.round(3).to_markdown(index=False))
 ```
 
 
-
 ```{python}
 #| echo: false
 #| results: 'asis'
@@ -62,19 +39,24 @@ df = pd.read_csv('../../data_cache/vignettes/supervised_classification/grouped_s
 print(df.round(3).to_markdown(index=False))
 ```
 
-It is always useful to view a scatterplot of the data, marking the two known groups
+From the table we can observe that houses built post-30s have on average a higher efficiency and these values are less spread out compared to houses built pre-30s. Although older houses appear to reach a higher level of environmental impact, newer houses seem to have a greater impact overall. A study of residential buildings in California (Chong, 2012)  found that new buildings (post-70s) use more electricity in higher temperatures than old buildings (pre-70s), therefore this could be a contributing factor. On the other hand, newer houses consume less energy and emit less carbon dioxide so the opportunity cost may be advantageous. Whilst lighting costs appear to be more or less the same, heating costs are substantially higher for older houses. Overall, the data points at newer houses being more energy efficient.
+
+To better understand the data we will view a scatterplot dinstinguishing the two groups.
 
 
 ![](../../data_cache/vignettes/supervised_classification/scatterplot.html){width="100%" height="600px"}
 
+From the scatterplot we can see that, except a few outliers of post-30 houses, houses built pre-30s consume the most energy. Therefore, two clearly distinct groups are created.  Additionally, there’s a floor effect on the data as most of it lies below the 10k value.
 
-
-For more marks, you may wish to extend this EDA section slightly.  We can extract the performance metrics from fitting such models:
+We will examine two classification models: Linear Discriminant Analysis (LDA) and Quadratic Discriminant Analysis (QDA), to extract the performance metrics.
 
 
 ## Fitting LDA and QDA classifiers
 
-The simplest classifiers we could apply are Linear and Quadratic Discriminant analysis.
+LDA is a dimensionality reduction technique that finds new axes that maximise the separation between classes and minimise variation within classes. 
+Its main assumptions are that the data within each class is normally distributed and, most importantly, that the covariance matrices of all classes are equal.
+The QDA differs from the LDA because it allows each class to have its own covariance matrix therefore it is useful for overlapping data.
+
 
 
 ```{python}
@@ -95,22 +77,28 @@ df.rename(columns={"Unnamed: 0": "Category"}, inplace=True)
 print(df.round(3).to_markdown(index=False))
 ```
 
-You should comment on these results. You may wish to add an interpretation of the coefficients of these classifiers.  Or there may be other metrics (confusion matrix) that you think should be presented.
+First, we will consider the LDA model.Precision is the proportion of actual positives over everything classified as positive therefore the model performs approximately the same in that regard since, for both categories, the value is around 0.7. However, whether this value is good enough depends on sector specific expectations. On the other hand, for the post-30s the recall (0.684) is worse than for the pre-30s group (0.79), indicating that the model is worse at recognising actual positives cases. As a result, it would be harder to correctly identify energy efficient and inefficient houses. 
+The QDA shows an imbalance between precision and recall for both categories. There is a high recall for the post-30s group but for the pre-30s group it is significantly lower, and it’s the same case vice versa for the precision. 
+Overall, the accuracy and f1-score are lower for the QDA, indicating that the LDA is a better model for the data.
+
 
 
 ## ROC curve (and AUC) for two simple classifiers
 
-We can of course examine the AUC for these classifiers.
-
+The ROC curve evaluates how well a classifier separates the two classes.
+We can also examine the AUC for these classifiers.
 
 ![](../../data_cache/vignettes/supervised_classification/roc.html){width="100%" height="600px"}
 
 
-You should comment on the performance of the classifier.
+From the graph we can see that the LDA performs slightly better. This is because the AUC (Area Under the ROC Curve) for the LDA is higher than the one for the QDA. Also, the ROC curve is greatly above the “random” line for both classifiers, which represents a poor performance classifiers. Since, as the true positive rate increases, the false positive rate is not too far behind, it may not be too optimal. As the UK government aims to reach net zero, a score of 0.81 may not be good enough as a classifier and a higher precision could be preferred.
 
-##  Additional credit
+## References
 
-For additional credit you should consider extended the pipeline and trying out other classifiers.
+Chong, H. (2012). Building vintage and electricity use: Old homes use less electricity in hot weather. European Economic Review, 56(5), pp.906–930. doi:https://doi.org/10.1016/j.euroecorev.2012.02.009.
+
+Watts, C., Jentsch, M.F. and James, P.A. (2011). Evaluation of domestic Energy Performance Certificates in use. Building Services Engineering Research and Technology, 32(4), pp.361–376. doi:https://doi.org/10.1177/0143624411404486.
+
 
 
 ## Record of AI use for MTHM503 supervised coursework
@@ -119,7 +107,7 @@ Instructions: You can use this document to record when, how and why you used Gen
 
 | **Date**       | **AI tool used** | **Purpose**                                | **Prompt**                                 | **Hyperlink to output (where possible)** | **Section of work used for** |
 |----------------|------------------|--------------------------------------------|--------------------------------------------|------------------------------------------|-------------------------------|
-| E.g. 15/07/2025| MS Copilot       | To help create an organised essay structure| ‘Generate ideas for structuring an essay on...’ | [insert link]                          | introduction                  |
+                  |
 |                |                  |                                            |                                            |                                          |                               |
 |                |                  |                                            |                                            |                                          |                               |
 |                |                  |                                            |                                            |                                          |                               |

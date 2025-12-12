@@ -9,21 +9,8 @@ format:
 ---
 
 
-
-## Your task
-
-This material is provided as context to the problem. You should rewrite it as you see fit.
-
 ## The Problem
-
-Data on [Energy Certificates](https://epc.opendatacommunities.org/) were downloaded in March 2025. These certificates are a non-random sample of UK housing, and contain information such as:
-
-- Property energy efficiency: The core data is the energy efficiency rating, which ranges from A (most efficient) to G (least efficient).
-- CO2 emissions: The data includes information on the building's likely carbon dioxide emissions.
-- Energy costs: Potential costs for heating and lighting the property are provided.
-- Improvement recommendations: Each EPC lists cost-effective ways to improve the building's energy performance.
-
-We have been asked by a local company to determine whether some local authorities are better than others in terms of reducing the carbon footprint of properties in their area.  However, some authorities have older housing stock which is innately has a larger carbon footprint. Likewise, some have larger properties than others.  The initial brief is to carry out an aggregate data analysis where the unit of analysis is a local authority.  We have been asked to consider the average carbon footprint of a house in a given area conditional on being pre- or post-1930 and having between 1 and 10 heated rooms.  This should let you fit a model which has fixed effects for the number of houses of pre-1930, post-1930 and 1, 2, 3, ..., 10 heated rooms
+The data originates from the Energy Performance of Buildings Register, and it was retrieved in March 2025. The main aim is to determine if some local authorities are better than others at reducing their carbon emissions. Some buildings are automatically large contributors to carbon emissions since they are older or have multiple rooms. Therefore, we will complete an aggregate data analysis where the grouping is the local authority. Additionally, we are taking into considerations houses being built pre- or post-1930 and having between 1 and 10 rooms. This allows to fit a model which has fixed effects for the number of houses of pre-1930, post-1930 and the various number of heated rooms.
 
 
 $$Y_{ji} = \beta_0 + \beta_1 x_{j}^{(\text{old})} + \sum_{r=1}^{10} \beta_r x_{j}^{(r)} + \gamma_j$$
@@ -41,9 +28,8 @@ Where
 
 ## The Data
 
-Some initial exploratory data analysis shows us how the carbon emissions vary by age of property and by the number of rooms:
-
-
+Firstly, we conduct exploratory data analysis to understand how the data is distributed. 
+We can see that old houses have on average a higher carbon consumption since they have a greater range and average shortfall from the ideal carbon footprint. Also, the number of rooms appears to influence carbon emissions. This is likely due to factors like having to heat rooms over a larger surface area and an increased number of appliances. Specifically, the 10-rooms category appears to have a lot of variability since the range is substantially bigger. This could be because of a greater number of outliers or the presence of skewed data.
 
 ![](../../data_cache/vignettes/regression/boxplot_age.html){width="100%" height="600px"}
 
@@ -52,8 +38,8 @@ Some initial exploratory data analysis shows us how the carbon emissions vary by
 
 ## The model
 
-A model can be fitted and a summary of the fixed effects produced
-
+With the data provided we can fit a mixed linear model  where shortfall is the outcome variable and the number of rooms and age are the fixed effects.
+Below is the summary of the fixed effects produced.
 
 ```{python}
 #| echo: false
@@ -64,18 +50,16 @@ with open('../../data_cache/vignettes/regression/model_fit.txt') as f:
     print(content)
 ```
 
+From the results we can determine that age has a negative effect on the shortfall as, compared to the shortfall the age coefficient is -2.981. It reinforces the hypothesis that newer buildings have reduced carbon emissions compared to older buildings. On the other hand, the number of rooms appears to have a positive effect on shortfall. This is to be expected since more rooms require a higher energy consumption. The coefficient of group variation being 0.4 indicates that shortfall varies moderately within the local authority.
 
 ## The key insight
 
-We've been asked to rate local authority performance, so the most important result is a ``caterpillar plot'' of the random effects.
+We can observe the caterpillar plot of random effects for the different local authorities.
 
 
 ![](../../data_cache/vignettes/regression/caterpillar.html){width="100%" height="600px"}
 
-##  Additional credit
-
-For additional credit you might like to enhance the exploratory data analysis. You could consider residual diagnostics to check the validity of the model fit. You may also like to consider the appropriateness of the adjusting variables age and number of rooms. You could consider extracting further variables from the database and fitting a slightly more elaborate model.
-
+Each point on the plot represents the random effect for the local authority while the lines represent a 95% confidence interval. In the caterpillar plot we can observe that many values fall above and below the population mean. However, the majority of the random effects cross the mean so there is not a great deviation from the average.
 
 ## Record of AI use for MTHM503 Regression coursework
 
@@ -83,7 +67,7 @@ Instructions: You can use this document to record when, how and why you used Gen
 
 | **Date**       | **AI tool used** | **Purpose**                                | **Prompt**                                 | **Hyperlink to output (where possible)** | **Section of work used for** |
 |----------------|------------------|--------------------------------------------|--------------------------------------------|------------------------------------------|-------------------------------|
-| E.g. 15/07/2025| MS Copilot       | To help create an organised essay structure| ‘Generate ideas for structuring an essay on...’ | [insert link]                          | introduction                  |
+                  |
 |                |                  |                                            |                                            |                                          |                               |
 |                |                  |                                            |                                            |                                          |                               |
 |                |                  |                                            |                                            |                                          |                               |

@@ -7,103 +7,72 @@ format:
 
 ---
 
-## Your task
-
-This material is provided as context to the problem. You should rewrite it as you see fit.  IN particular, you should demonstrate you understand why we are undertaking a cluster analysis, and what the various methods are telling us.  In particular, you should explain how principal components helps us visualise the results of the clustering.
-
-
 ## The Problem
 
-Police recorded data in Great Britain is called "Stats19" and is available at <https://www.data.gov.uk/dataset/cb7ae6f0-4be6-4935-9277-47e5ce24a11f/road-accidents-safety-data>.  These data are typically split into three linked tables:
+According to the World Health Organization(2023) approximately 1.19 million people die due to a road collision, however traffic death rates are at their lowest in European countries (Choudhary et al., 2023). To understand which factors influence road accidents, we can look at weather and road conditions. 
 
-- Accidents
+The data used in this analysis derives from files that provide detailed data for road collisions (which were reported to the police) that involve personal injury on public roads in Great Britain. It includes data starting in 1979 and is updated every year in late September with annual data. The data is typically divided into three linked tables: accidents, vehicles and casualties. The accidents table reports information about the number of vehicles and casualties, when and where the accident took place, the road and weather conditions. Whereas, the vehicles table provides information on the type of vehicle, age, manouvre, and driver. Finally, the causalties table gives information about the category of individual (driver, pedestrian, cyclist, etc.) victim to the collision, severity, their age and sex.
 
-  Each row represents a single reported accident. Key fields include:
+In this analysis the factors we are considering are collisions at: mini-roundabouts,  in the rain, in the dark, in an urban setting, and where the most serious injury reported was a slight injury.
 
-  - Date and time
-  - Location (e.g. latitude/longitude, local authority)
-  - Road type and conditions
-  - Weather and lighting
-  - Number of vehicles and casualties
-
-- Vehicles
-
-  Each row represents a vehicle involved in an accident. Includes:
-
-  - Vehicle type and age
-  - Manoeuvre and direction
-  - Driver age and sex
-
-- Casualties
-  
-  Each row represents a person injured or killed. Includes:
-
-  - Casualty type (pedestrian, cyclist, driver, etc.)
-  - Severity (slight, serious, fatal)
-  - Age, sex, and mode of transport
-
-These tables are linked via a unique accident index.
-
-
-We are interested in creating clusters of like authorities based on the kinds of collisions that occur in their area.  You have been given a count of the number of collisions at Mini-roundabout, in the Rain, in the Dark, when the road is Dry, in an urban setting and where the most seriously injured casualty was reported as having a slight injury.
-
-Some previous cluster analysis work has been reported at:
-
-- [ Cluster analysis](https://ijirt.org/publishedpaper/IJIRT175966_PAPER.pdf)
-- [More cluster analysis](https://www.researchgate.net/publication/357727987_Identification_of_Traffic_Accident_Patterns_via_Cluster_Analysis_and_Test_Scenario_Development_for_Autonomous_Vehicles/fulltext/61dcdc17034dda1b9eebd63d/Identification-of-Traffic-Accident-Patterns-via-Cluster-Analysis-and-Test-Scenario-Development-for-Autonomous-Vehicles.pdf)
 
 
 ## The Data
 
-The first thing we can do is consider a scatterplot of the data
+Firstly, as part of an exploratory data analysis we look at a scatterplot of the data. This is because it shows the relationship between the different factors and helps identify outliers. 
 
 ![](../../data_cache/vignettes/unsupervised_classification/scatterplot.html){width="100%" height="600px"}
 
+From the graph, we can infer that the lack of mini-roundabouts increases the likelihood of collisions for all conditions. Converting both signalised and unsignalised intersections into roundabouts increases safety and greatly reduces the probability of injuries from crashes (Gross et al., 2013). Additionally, there is a negative correlation between dry conditions and rainy weather since it’s an inverse effect. We can also note that there is a positive correlation between dry conditions and slight injury. It is not necessarily indicative of reckless driving, but rather, higher traffic volumes due to safer driving conditions (Gorzelanczyk, 2025). On the other hand, there is a weak positive correlation between darkness and rainy weather as both factors can impede vision. The weakness of this relationship could potentially be from drivers being more careful when it’s raining, therefore reducing the risk of road collisions (Ackaah, Afukaar and Aouseyine, 2020). 
 
-
-We are going to use the proportion of each subtype of collision that was reported, and rescale the variables.
-
+The machine learning algorithm we will firstly use to group similar data is hierarchical clustering, therefore, we are going to use a rescaled proportion of each subtype of collision reported. Rescaling is important because it aids interpretability since the variables are placed on the same scale.
 
 ## Hierarchical clustering
 
-
-The first task is to perform hierarchical clustering.
+To further analyse the data, we undertake a cluster analysis. This is because there could be similar groups of conditions that behave the same.
 
 ![](../../data_cache/vignettes/unsupervised_classification/dendrogram.html){width="100%" height="600px"}
 
+Hierarchical clustering is an unsupervised machine learning algorithm that categorises subjects into different groups (clusters) through the identification of specific characteristics (Zhou,2023).Therefore, the cut-off point where height is equal to 7 would be the most suitable since it provides three identifiable clusters. 
 
-You need to select a suitable ``cut-point'' and cut the tree at an appropriate height to form a number of clusters.
-
-To aid visualisation of results, you should plot the cluster membership on a scatterplot of the first two principal components.
-
+To aid visualisation of results, we perform a Principal Components Analysis. It is a method of dimensionality reduction which aims to preserve as much variance as possible. It forms clusters of similar data based on the correlation between the characteristics. We will choose the first two principal components which tend to capture most of the variance in the data. 
 
 ![](../../data_cache/vignettes/unsupervised_classification/kscatter.html){width="100%" height="600px"}
 
+As we can see, there is only one clear separation, which is between cluster 4 and the other three clusters. Since clusters 1,2 and 3 appear to greatly overlap, the two principal components may not be capturing enough of the variation. To improve visualisation of the results and get a better understanding of how the data varies, it could be useful to consider a 3D scatterplot.
 
 ## kmeans clustering
 
-
-The second task is to perform k-means clustering. You should select an appropriate number of clusters.
-First, you should look at the cluster centroids:
-
+k-Means is another example of clustering for unlabeled data which looks for a pre-determined number of clusters.
 
 ![](../../data_cache/vignettes/unsupervised_classification/kcentroids1.html){width="100%" height="600px"}
 
+Looking at the cluster centroids, cluster 3 is much greater than the other clusters. Therefore, we can interpret cluster 3 as being a condition which on average causes the most collisions. Additionally, it demonstrates that it is the most distinguishable centroid whilst the others share greater similarities.
 
 ![](../../data_cache/vignettes/unsupervised_classification/kcentroids2.html){width="100%" height="600px"}
 
+Looking at the above figure, we can note that cluster 3 consistently has a higher cluster center compared to the others however, the difference is not substantial when separated by features. This may be because the total number of collisions as a feature, does not represent the different clusters well.
 
-As before you should plot the cluster membership on a scatterplot of the first two principal components.
+As before we will plot the first two principal components.
 
 ![](../../data_cache/vignettes/unsupervised_classification/kscatter.html){width="100%" height="600px"}
 
+By plotting the cluster membership on a scatterplot of the first two principal components, we can note that the clusters form four distinguishable groups that appear to merge in the centre. This could be because, despite there being a high inter-cluster correlation, the grouping is not strong enough. As a result, there is a great similarity between the different conditions that cause collisions.
+
+
+## References
+
+Ackaah, W., Apuseyine, B.A. and Afukaar, F.K. (2020) 'Road traffic crashes at night-time: characteristics and risk factors', International Journal of Injury Control and Safety Promotion, 27(3), pp. 392–399. https://doi.org/10.1080/17457300.2020.1785508.
+
+Gross, F. et al. (2012) 'Safety effectiveness of converting signalized intersections to roundabouts, ‘Accident Analysis & Prevention’, 50, pp. 234–241. https://doi.org/10.1016/j.aap.2012.04.012.
+
+Gorzelanczyk, P. (2025) 'Impact of weather conditions and road type on traffic safety', European Transport Studies, 2, p. 100042. https://doi.org/10.1016/j.ets.2025.100042.
+
+Zhou, H. (2023b) 'Hierarchical clustering and dendrogram', in Apress eBooks, pp. 121–142. https://doi.org/10.1007/978-1-4842-9771-1_8.
 
 
 
 
-##  Additional credit
-
-For additional credit you should consider adding a further unsupervised classification method. Alternatively, you could increase the number of variables used in the clustering.
 
 
 
@@ -113,7 +82,7 @@ Instructions: You can use this document to record when, how and why you used Gen
 
 | **Date**       | **AI tool used** | **Purpose**                                | **Prompt**                                 | **Hyperlink to output (where possible)** | **Section of work used for** |
 |----------------|------------------|--------------------------------------------|--------------------------------------------|------------------------------------------|-------------------------------|
-| E.g. 15/07/2025| MS Copilot       | To help create an organised essay structure| ‘Generate ideas for structuring an essay on...’ | [insert link]                          | introduction                  |
+|      | | |                          |                   |
 |                |                  |                                            |                                            |                                          |                               |
 |                |                  |                                            |                                            |                                          |                               |
 |                |                  |                                            |                                            |                                          |                               |
